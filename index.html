@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Нікнейми, шкода та бої</title>
+  <title>#saxonbattlechallenge</title>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
@@ -13,13 +13,27 @@
       padding: 20px;
     }
 
+    .tournament-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: #ffa726;
+      text-shadow: 0 0 4px #ffa726, 0 0 8px #ff9800;
+      text-align: center;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
     #player-list {
       max-width: 300px;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border-radius: 12px;
       padding: 10px;
-      box-shadow: 0 0 15px rgba(255, 167, 38, 0.2);
+      box-shadow: 0 0 15px rgba(255, 167, 38, 0.15);
       position: relative;
+      margin: 0 auto;
     }
 
     .header-wrapper {
@@ -145,6 +159,8 @@
 </head>
 <body>
 
+<div class="tournament-title">#saxonbattlechallenge</div>
+
 <div id="player-list">
   <div class="header-wrapper">
     <div class="header-row">
@@ -201,7 +217,7 @@ async function fetchData() {
     }
 
     players.sort((a, b) => b.battleCount - a.battleCount || b.avg - a.avg);
-    players = players.slice(0, 7); // 🔥 тільки ТОП-7
+    players = players.slice(0, 7);
 
     const container = document.getElementById('player-list');
     const existingRows = Array.from(container.querySelectorAll('.player-row'));

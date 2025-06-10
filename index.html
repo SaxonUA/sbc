@@ -180,7 +180,7 @@
           if (currentDamage === newValue) {
             clearInterval(animationInterval);
             animationInProgress = false;
-            setTimeout(() => container.classList.remove('increase', 'decrease'), 1500);
+            setTimeout(() => container.classList.remove('increase', 'decrease'), 15);
           }
         }, 5);
       }

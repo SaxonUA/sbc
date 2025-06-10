@@ -1,299 +1,212 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <title>#saxonbattlechallenge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Рембо Челендж</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
-      background: transparent;
-      font-family: 'Rajdhani', sans-serif;
-      color: #ffa726;
-      padding: 20px;
-    }
-
-    .tournament-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: #ffa726;
-      text-shadow: 0 0 4px #ffa726, 0 0 8px #ff9800;
+      background: url('РЕМБО САКСОН (1).png') no-repeat center/cover;
+      font-family: 'Arial Black', sans-serif;
+      color: #fff;
       text-align: center;
-      margin-bottom: 4px;
-      letter-spacing: 1px;
-    }
-
-    #player-list {
-      max-width: 300px;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border-radius: 12px;
-      padding: 10px;
-      box-shadow: 0 0 15px rgba(255, 167, 38, 0.15);
-      position: relative;
-      margin: 0 auto;
-    }
-
-    .header-wrapper {
-      background: linear-gradient(135deg, #333, #222);
-      border-radius: 12px;
-      box-shadow: inset 0 0 0 2px #ffa726;
-    }
-
-    .header-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 16px;
-      color: #ffffff;
-      font-size: 16px;
-    }
-
-    .header-row .nickname {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 25px;
-      letter-spacing: 1px;
-      color: #ffa726;
-      text-shadow: 0 0 4px #ffa726, 0 0 8px #ff9800;
-    }
-
-    .header-row .stats {
-      text-align: right;
-      font-size: 15px;
-      color: #ccc;
-    }
-
-    .player-row {
-      display: flex;
-      justify-content: space-between;
-      background: linear-gradient(to right, #2b2b2b, #1e1e1e);
-      padding: 10px 16px;
-      margin: 6px 0;
-      border-radius: 8px;
-      position: relative;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-      transition: background 0.3s ease, transform 0.4s ease;
-    }
-
-    .player-row.updated {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    .top-player::before,
-    .second-player::before,
-    .third-player::before {
-      content: '';
-      display: block;
-      width: 6px;
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
-    }
-
-    .top-player::before {
-      background-color: #ffd700;
-    }
-
-    .second-player::before {
-      background-color: #c0c0c0;
-    }
-
-    .third-player::before {
-      background-color: #cd7f32;
-    }
-
-    .nickname {
-      color: #ffffff;
-      font-weight: bold;
-      font-size: 18px;
-      flex: 1;
-      word-break: break-word;
-    }
-
-    .stats {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
+      justify-content: center;
     }
 
-    .value {
-      font-size: 26px;
+    .overlay {
+      padding: 25px 50px;
+      margin: auto;
+      background: transparent;
+      border-radius: 30px;
+      width: fit-content;
+    }
+
+    .damage-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+
+    .label {
+      font-size: 40px;
+      color: orange;
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, .7), 0 0 10px rgba(255, 140, 0, .8);
+      margin: 0;
+    }
+
+    .flip-damage .flip-clock-wrapper {
+      background: rgba(0, 0, 0, .5);
+      border: 2px solid orange;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 140, 0, .6);
+      display: inline-block;
+    }
+
+    .flip-damage.increase .flip-clock-wrapper {
+      animation: glow-green 1.5s ease;
+    }
+
+    .flip-damage.decrease .flip-clock-wrapper {
+      animation: glow-red 1.5s ease;
+    }
+
+    @keyframes glow-green {
+      0% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.9); border-color: lime; }
+      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
+    }
+
+    @keyframes glow-red {
+      0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.9); border-color: red; }
+      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
+    }
+
+    .note {
+      font-size: 25px;
       font-weight: bold;
-      color: #ffa726;
+      margin: 5px 0;
     }
 
-    .battles {
-      font-size: 12px;
-      font-weight: bold;
-      color: #999;
+    .note-gradient {
+      background: linear-gradient(270deg, orange, white);
+      background-size: 400% 50%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: grad 6s ease infinite;
     }
 
-    #last-updated {
-      font-size: 12px;
-      color: #bbb;
-      text-align: right;
-      margin-top: 5px;
+    @keyframes grad {
+      0% { background-position: 0 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0 50% }
     }
 
-    @media (max-width: 480px) {
-      #player-list {
-        max-width: 100%;
-      }
+    .flip-clock-wrapper ul li a div div.inn {
+      font-size: 70px;
+    }
 
-      .header-row,
-      .player-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    .countdown-wrapper {
+      margin-top: 60px;
+    }
 
-      .stats {
-        align-items: flex-start;
-        margin-top: 5px;
-      }
+    .rembo-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 45px;
+      color: orange;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, .7), 0 0 10px rgba(255, 140, 0, .8);
+    }
+
+    #damage-clock {
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
+  <div class="overlay">
+    <div class="damage-block">
+      <div class="label">ЗАЛИШИЛОСЬ</div>
+      <div class="label">НАСТРІЛЯТИ:</div>
+      <div class="flip-damage"><div id="damage-clock"></div></div>
+    </div>
 
-<div class="tournament-title">#saxonbattlechallenge</div>
+    <div class="note note-gradient">+500 урону за 1 лайк YouTube</div>
+    <div class="note note-gradient">+1 урон за 1 "тап" в TikTok</div>
+    <div class="note note-gradient">+50 урону за 1 грн</div>
 
-<div id="player-list">
-  <div class="header-wrapper">
-    <div class="header-row">
-      <div class="nickname">Нікнейм</div>
-      <div class="stats">
-        <div>Сер.Шкода</div>
-        <div>К-ть боїв</div>
+    <div class="countdown-wrapper">
+      <div class="flip-clock-wrapper">
+        <div class="rembo-title">До кінця челенджу</div>
+        <div class="rembo-title">залишилось:</div>
+        <div id="flip-clock"></div>
       </div>
     </div>
   </div>
-  <div id="last-updated"></div>
-</div>
 
-<script>
-const sheetId = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
-const sheetName = "TURNIR";
-const apiKey = "AIzaSyAHZjEwZC7BE50RZRlTKqXNS2ObFjkX1EM";
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
+  <script>
+    const SHEET_ID = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
+    const GID = "1630188258";
 
-const urlNicknames = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!B2:B?key=${apiKey}`;
-const urlDamage = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!Y2:Y?key=${apiKey}`;
-const urlBattles = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!W2:W?key=${apiKey}`;
-
-let prevPositions = new Map();
-let prevValues = new Map();
-
-async function fetchData() {
-  try {
-    const [nickRes, dmgRes, battleRes] = await Promise.all([
-      fetch(urlNicknames),
-      fetch(urlDamage),
-      fetch(urlBattles)
-    ]);
-
-    const nickData = await nickRes.json();
-    const dmgData = await dmgRes.json();
-    const battleData = await battleRes.json();
-
-    const nicknames = nickData.values || [];
-    const damages = dmgData.values || [];
-    const battles = battleData.values || [];
-
-    let players = [];
-    const maxLen = Math.min(nicknames.length, damages.length, battles.length);
-
-    for (let i = 0; i < maxLen; i++) {
-      const name = nicknames[i][0]?.trim();
-      const dmgRaw = (damages[i] && damages[i][0]) ? damages[i][0].toString().trim().replace(/\s/g, '').replace(',', '.') : '0';
-      const avg = parseFloat(dmgRaw);
-      const battleCount = parseInt(battles[i]?.[0]) || 0;
-
-      if (!name || isNaN(avg) || battleCount === 0) continue;
-
-      players.push({ name, avg, battleCount });
+    async function fetchSingleCell(range) {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&range=${range}&tqx=out:json`;
+      const res = await fetch(url);
+      const txt = await res.text();
+      const json = JSON.parse(txt.substring(47).slice(0, -2));
+      return json.table.rows[0].c[0]?.v || 0;
     }
 
-    players.sort((a, b) => b.battleCount - a.battleCount || b.avg - a.avg);
-    players = players.slice(0, 7);
+    $(async function () {
+      const flipClock = $('#flip-clock').FlipClock(getTimeLeftKyiv(), {
+        clockFace: 'HourlyCounter', countdown: true, autoStart: true
+      });
+      $('.flip-clock-divider.hours .flip-clock-label').text('Години');
+      $('.flip-clock-divider.minutes .flip-clock-label').text('Хвилини');
+      $('.flip-clock-divider.seconds .flip-clock-label').text('Секунди');
 
-    const container = document.getElementById('player-list');
-    const existingRows = Array.from(container.querySelectorAll('.player-row'));
-    prevPositions.clear();
-    existingRows.forEach(el => {
-      prevPositions.set(el.dataset.name, el.getBoundingClientRect().top);
+      setInterval(() => {
+        flipClock.setTime(getTimeLeftKyiv());
+      }, 60000);
+
+      const damageClock = $('#damage-clock').FlipClock(0, { clockFace: 'Counter', autoStart: false });
+      let currentDamage = 0;
+      let animationInterval = null;
+      let animationInProgress = false;
+
+      async function animateDamage(newValue) {
+        if (animationInProgress) clearInterval(animationInterval);
+        if (currentDamage === newValue) return;
+
+        const step = newValue > currentDamage ? 1 : -1;
+        const container = document.querySelector('.flip-damage');
+
+        container.classList.toggle('increase', step > 0);
+        container.classList.toggle('decrease', step < 0);
+
+        animationInProgress = true;
+        animationInterval = setInterval(() => {
+          currentDamage += step;
+          damageClock.setTime(currentDamage);
+          if (currentDamage === newValue) {
+            clearInterval(animationInterval);
+            animationInProgress = false;
+            setTimeout(() => container.classList.remove('increase', 'decrease'), 1500);
+          }
+        }, 5);
+      }
+
+      async function updateDamage() {
+        try {
+          let raw = await fetchSingleCell("C14");
+          raw = raw.toString().replace(/\s/g, '');
+          const value = parseInt(raw || 0);
+          animateDamage(value);
+        } catch (e) {
+          console.error("Помилка оновлення дамага:", e);
+        }
+      }
+
+      await updateDamage();
+      setInterval(updateDamage, 15000);
     });
-    while (container.children.length > 2) {
-      container.removeChild(container.lastChild);
+
+    function getTimeLeftKyiv() {
+      const now = new Date();
+      const kyiv = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Kyiv" }));
+      const end = new Date(kyiv);
+      end.setHours(23, 59, 59, 999);
+      return Math.floor((end - kyiv) / 1000);
     }
-
-    const fragment = document.createDocumentFragment();
-
-    players.forEach((p, index) => {
-      const row = document.createElement('div');
-      row.className = 'player-row';
-      row.dataset.name = p.name;
-
-      if (index === 0) row.classList.add('top-player');
-      else if (index === 1) row.classList.add('second-player');
-      else if (index === 2) row.classList.add('third-player');
-
-      if (prevValues.has(p.name) && prevValues.get(p.name) !== p.avg) {
-        row.classList.add('updated');
-      }
-      prevValues.set(p.name, p.avg);
-
-      let battleWord = 'боїв';
-      if (p.battleCount === 1) battleWord = 'бій';
-      else if ([2, 3, 4].includes(p.battleCount)) battleWord = 'боя';
-
-      row.innerHTML = `
-        <div class="nickname"><strong>${index + 1}.</strong> ${p.name}</div>
-        <div class="stats">
-          <div class="value">${p.avg.toLocaleString('uk-UA')}</div>
-          <div class="battles">${p.battleCount.toLocaleString('uk-UA')} ${battleWord}</div>
-        </div>
-      `;
-
-      fragment.appendChild(row);
-    });
-
-    container.appendChild(fragment);
-
-    const newRows = Array.from(container.querySelectorAll('.player-row'));
-    newRows.forEach(el => {
-      const name = el.dataset.name;
-      const oldTop = prevPositions.get(name);
-      const newTop = el.getBoundingClientRect().top;
-
-      if (oldTop !== undefined) {
-        const deltaY = oldTop - newTop;
-        el.style.transform = `translateY(${deltaY}px)`;
-        el.style.transition = 'transform 0s';
-        requestAnimationFrame(() => {
-          el.style.transition = 'transform 0.4s ease';
-          el.style.transform = 'translateY(0)';
-        });
-        el.addEventListener('transitionend', () => {
-          el.style.transition = '';
-        }, { once: true });
-      }
-    });
-
-    document.getElementById('last-updated').textContent =
-      `Оновлено: ${new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv' })}`;
-
-  } catch (e) {
-    document.getElementById('player-list').innerText = "❌ Помилка завантаження.";
-    console.error(e);
-  }
-}
-
-fetchData();
-setInterval(fetchData, 10000);
-</script>
-
+  </script>
 </body>
 </html>

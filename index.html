@@ -50,6 +50,24 @@
       display: inline-block;
     }
 
+    .flip-damage.increase .flip-clock-wrapper {
+      animation: glow-green 1.5s ease;
+    }
+
+    .flip-damage.decrease .flip-clock-wrapper {
+      animation: glow-red 1.5s ease;
+    }
+
+    @keyframes glow-green {
+      0% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.9); border-color: lime; }
+      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
+    }
+
+    @keyframes glow-red {
+      0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.9); border-color: red; }
+      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
+    }
+
     .note {
       font-size: 25px;
       font-weight: bold;
@@ -142,12 +160,39 @@
 
       const damageClock = $('#damage-clock').FlipClock(0, { clockFace: 'Counter', autoStart: false });
       let currentDamage = 0;
+      let animationInterval = null;
+      let animationInProgress = false;
 
       async function animateDamage(newValue) {
-        if (currentDamage !== newValue) {
-          currentDamage = newValue;
+        if (animationInProgress) clearInterval(animationInterval);
+        if (currentDamage === newValue) return;
+
+        const container = document.querySelector('.flip-damage');
+        const increasing = newValue > currentDamage;
+        const step = 1000 * (increasing ? 1 : -1);
+        const diff = Math.abs(newValue - currentDamage);
+        const stepsCount = Math.ceil(diff / 1000);
+        const totalAnimationTime = 4000; // 4 секунди
+        const interval = Math.max(10, Math.floor(totalAnimationTime / stepsCount));
+
+        container.classList.toggle('increase', increasing);
+        container.classList.toggle('decrease', !increasing);
+
+        animationInProgress = true;
+        animationInterval = setInterval(() => {
+          currentDamage += step;
+
+          if ((increasing && currentDamage >= newValue) || (!increasing && currentDamage <= newValue)) {
+            currentDamage = newValue;
+            damageClock.setTime(currentDamage);
+            clearInterval(animationInterval);
+            animationInProgress = false;
+            setTimeout(() => container.classList.remove('increase', 'decrease'), 15000);
+            return;
+          }
+
           damageClock.setTime(currentDamage);
-        }
+        }, interval);
       }
 
       async function updateDamage() {

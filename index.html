@@ -26,7 +26,7 @@
       font-weight: bold;
       text-align: center;
       margin-bottom: 10px;
-      color: #00fff7;
+      color:#00fffb;
       text-shadow: 2px 2px 5px #000;
     }
 
@@ -40,8 +40,9 @@
       font-size: 25px;
       text-align: center;
       padding: 10px 15px;
-      background: rgba(255, 215, 0, 0.2);
+      background: rgba(0, 255, 251, 0.2);
       border: 2px solid gold;
+      
       border-radius: 10px;
       color: white;
       position: absolute;
@@ -130,6 +131,7 @@
 
     let currentTopNick = "";
     let activeTop = 1;
+    let previousRows = [];
 
     async function fetchTopPlayers() {
       try {
@@ -162,7 +164,6 @@
         if (newTop.nick !== currentTopNick) {
           currentTopNick = newTop.nick;
 
-          // ВИШИБАЙЛО — лише нік + очки
           nextDiv.textContent = `${newTop.nick} — ${newTop.points} очок`;
           nextDiv.className = "top-player slide-in";
 
@@ -174,23 +175,37 @@
         }
 
         const tbody = document.querySelector("#topTable tbody");
-        tbody.innerHTML = "";
+        const newRows = [];
 
         for (let i = 1; i < Math.min(5, uniquePlayers.length); i++) {
           const player = uniquePlayers[i];
+          const place = i + 1;
+          newRows.push({
+            place,
+            nick: player.nick,
+            tank: player.tank,
+            points: player.points
+          });
+        }
+
+        const rowsChanged = JSON.stringify(newRows) !== JSON.stringify(previousRows);
+        if (!rowsChanged) return;
+
+        previousRows = newRows;
+
+        tbody.innerHTML = "";
+        newRows.forEach(({ place, nick, tank, points }) => {
           const tr = document.createElement("tr");
           tr.className = "fade-in";
 
-          let place = i + 1;
           let placeClass = "";
-
           if (place === 2) placeClass = "gold";
           else if (place === 3) placeClass = "silver";
           else if (place === 4) placeClass = "bronze";
 
-          tr.innerHTML = `<td class="${placeClass}">${place}</td><td>${player.nick}</td><td>${player.tank}</td><td>${player.points}</td>`;
+          tr.innerHTML = `<td class="${placeClass}">${place}</td><td>${nick}</td><td>${tank}</td><td>${points}</td>`;
           tbody.appendChild(tr);
-        }
+        });
 
       } catch (error) {
         console.error("Помилка під час завантаження:", error);

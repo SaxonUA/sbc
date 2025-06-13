@@ -12,9 +12,11 @@
     }
 
     .container {
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
       padding: 24px;
       width: fit-content;
       max-width: 95vw;
@@ -25,8 +27,10 @@
       font-weight: bold;
       text-align: center;
       margin-bottom: 20px;
-      color: orange;
-      text-shadow: 0 0 12px orange;
+      background: linear-gradient(to right, orange, gold);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(255,140,0,0.8);
     }
 
     .top-player-wrapper {
@@ -35,16 +39,16 @@
       align-items: center;
       margin-bottom: 30px;
       min-height: 60px;
+      position: relative;
     }
 
     .top-player {
-      background: linear-gradient(145deg, #3b3b3b, #1e1e1e);
+      background: rgba(30, 30, 30, 0.6);
       border: 3px solid gold;
       border-radius: 15px;
       padding: 20px 30px;
       font-size: 26px;
       color: gold;
-      position: absolute;
       text-align: center;
       text-shadow: 1px 1px 5px #000;
       box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
@@ -53,8 +57,14 @@
       gap: 10px;
       animation: fadeIn 0.8s ease;
       opacity: 0;
-      transform: translateY(-10px);
+      transform: scale(0.95);
       animation-fill-mode: forwards;
+      transition: all 0.5s ease;
+    }
+
+    .top-player.explode {
+      box-shadow: 0 0 15px 5px gold, 0 0 25px 10px orange;
+      transform: scale(1.03);
     }
 
     .top-player::before {
@@ -62,6 +72,25 @@
       font-size: 32px;
       display: inline-block;
       animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    .new-leader {
+      position: absolute;
+      top: -30px;
+      background: rgba(255,165,0,0.8);
+      padding: 5px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #000;
+      animation: fadeUp 2s ease;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(10px); }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
     }
 
     @keyframes pulse {
@@ -73,7 +102,7 @@
     @keyframes fadeIn {
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: scale(1);
       }
     }
 
@@ -85,13 +114,14 @@
     }
 
     .card {
-      background: #2a2a2a;
+      background: rgba(42, 42, 42, 0.6);
       border-radius: 12px;
       padding: 16px;
       box-shadow: inset 0 0 5px #000, 0 0 10px rgba(255,255,255,0.05);
       width: 200px;
       transition: transform 0.2s ease;
       text-align: center;
+      backdrop-filter: blur(6px);
     }
 
     .card:hover {
@@ -115,6 +145,11 @@
     .card.copper {
       border: 2px solid #b87333;
       color: #b87333;
+    }
+    .card.wood {
+      border: 2px solid #8B4513;
+      background: rgba(139, 69, 19, 0.5);
+      color: #deb887;
     }
 
     .card .nick {
@@ -171,25 +206,30 @@
           }
         });
 
-        const battles = Array.from(playerMap.values())
-          .sort((a, b) => b.points - a.points);
-
+        const battles = Array.from(playerMap.values()).sort((a, b) => b.points - a.points);
         if (!battles.length) return;
 
-        // Top player block
         const top = battles[0];
         const topKey = `${top.nick}-${top.points}`;
         const topEl = document.getElementById("topPlayer");
 
         if (topKey !== lastTopKey) {
-          topEl.style.animation = "none";
-          void topEl.offsetWidth; // reset animation
+          topEl.classList.remove("explode");
+          void topEl.offsetWidth;
+          topEl.classList.add("explode");
           topEl.style.animation = "fadeIn 0.8s ease forwards";
           topEl.textContent = `${top.nick} — ${top.points} балів`;
+
+          const wrapper = document.querySelector(".top-player-wrapper");
+          const notice = document.createElement("div");
+          notice.className = "new-leader";
+          notice.textContent = "НОВИЙ ЛІДЕР!";
+          wrapper.appendChild(notice);
+
+          setTimeout(() => notice.remove(), 2000);
           lastTopKey = topKey;
         }
 
-        // Render cards
         const cards = document.getElementById("cards");
         cards.innerHTML = "";
 
@@ -200,6 +240,7 @@
           if (idx === 0) card.classList.add("silver");
           else if (idx === 1) card.classList.add("bronze");
           else if (idx === 2) card.classList.add("copper");
+          else if (idx === 3) card.classList.add("wood");
 
           card.innerHTML = `
             <div class="place">${idx + 2} місце</div>

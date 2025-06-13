@@ -28,7 +28,21 @@
       text-align: center;
       margin-bottom: 20px;
       color: orange;
-      text-shadow: 2px 2px 6px #000;
+      text-shadow: 0 0 6px #000, 0 0 12px rgba(255,165,0,0.6);
+      position: relative;
+    }
+
+    .title.smack {
+      animation: smack 1s ease-out;
+    }
+
+    @keyframes smack {
+      0% { transform: translateY(0); }
+      20% { transform: translateY(-20px); }
+      40% { transform: translateY(35px); }
+      60% { transform: translateY(-10px); }
+      80% { transform: translateY(10px); }
+      100% { transform: translateY(0); }
     }
 
     .top-player-wrapper {
@@ -77,15 +91,7 @@
       z-index: -1;
       background: linear-gradient(270deg, white, yellow, orange, black, white);
       background-size: 800% 800%;
-      animation: borderMove 8s linear infinite;
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask-composite: exclude;
-      -webkit-mask-composite: destination-out;
-      padding: 3px;
-      box-sizing: border-box;
-      background-size: 600% 600%;
-      animation: borderMove 8s linear infinite;
+      animation: borderMove 36s linear infinite;
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask-composite: exclude;
@@ -172,14 +178,9 @@
       border: 2px solid #b87333;
       color: #b87333;
     }
-    .card.wood {
-      border: 2px solid #8B4513;
-      background: rgba(139, 69, 19, 0.5);
-      color: #deb887;
-    }
 
     .card .nick {
-      font-size: 18px;
+      font-size: 26px;
       font-weight: bold;
       color: #fff;
     }
@@ -191,7 +192,7 @@
     }
 
     .card .points {
-      font-size: 18px;
+      font-size: 26px;
       font-weight: bold;
       color: #00ffe7;
     }
@@ -199,7 +200,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="title">ВИШИБАЙЛО</div>
+    <div class="title" id="mainTitle">ВИШИБАЙЛО</div>
     <div class="top-player-wrapper">
       <div class="top-player" id="topPlayer"></div>
     </div>
@@ -250,6 +251,11 @@
           notice.textContent = "НОВИЙ ЛІДЕР!";
           wrapper.appendChild(notice);
 
+          const title = document.getElementById("mainTitle");
+          title.classList.remove("smack");
+          void title.offsetWidth;
+          title.classList.add("smack");
+
           setTimeout(() => notice.remove(), 2000);
           lastTopKey = topKey;
         }
@@ -257,14 +263,13 @@
         const cards = document.getElementById("cards");
         cards.innerHTML = "";
 
-        battles.slice(1).forEach((b, idx) => {
+        battles.slice(1, 4).forEach((b, idx) => {
           const card = document.createElement("div");
           card.className = "card fade-in";
 
           if (idx === 0) card.classList.add("silver");
           else if (idx === 1) card.classList.add("bronze");
           else if (idx === 2) card.classList.add("copper");
-          else if (idx === 3) card.classList.add("wood");
 
           card.innerHTML = `
             <div class="place">${idx + 2} місце</div>
@@ -275,7 +280,6 @@
 
           cards.appendChild(card);
         });
-
       } catch (e) {
         console.error("Помилка завантаження:", e);
         document.getElementById("topPlayer").textContent = "Помилка";

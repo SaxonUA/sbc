@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <title>WOT Вишибайло – ТОП-1 бій кожного гравця</title>
+
+  <!-- FlipClock & font for таймер -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
   <style>
     body {
       background: transparent;
@@ -20,6 +25,7 @@
       padding: 24px;
       width: fit-content;
       max-width: 95vw;
+      margin: 0 auto;
     }
 
     .title {
@@ -39,7 +45,7 @@
     @keyframes smack {
       0% { transform: translateY(0); }
       20% { transform: translateY(-20px); }
-      40% { transform: translateY(35px); }
+      40% { transform: translateY(30px); }
       60% { transform: translateY(-10px); }
       80% { transform: translateY(10px); }
       100% { transform: translateY(0); }
@@ -196,6 +202,43 @@
       font-weight: bold;
       color: #00ffe7;
     }
+
+    .footer-timer-wrapper {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    #flip-clock {
+      display: flex;
+      justify-content: center;
+    }
+
+    .flip-clock-wrapper {
+      background-color: rgba(0, 0, 0, 0.0);
+      border-radius: 20px;
+      padding: 20px 0px;
+      display: inline-block;
+      margin: 0 auto;
+    }
+
+    .flip-clock-wrapper ul {
+      float: left;
+    }
+
+    .flip-clock-wrapper ul li a div div.inn {
+      font-size: 70px;
+    }
+
+    .rembo-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 32px;
+      color: orange;
+      margin-bottom: 0;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7), 0 0 10px rgba(255,140,0,0.8);
+      letter-spacing: 2px;
+      line-height: 1.2;
+    }
   </style>
 </head>
 <body>
@@ -205,8 +248,15 @@
       <div class="top-player" id="topPlayer"></div>
     </div>
     <div class="cards" id="cards"></div>
+
+    <div class="footer-timer-wrapper">
+      <div class="rembo-title">ДО КІНЦЯ ЧЕЛЕНДЖУ<br>ЗАЛИШИЛОСЬ:</div>
+      <div id="flip-clock"></div>
+    </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
   <script>
     const SHEET_ID = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
     const SHEET_NAME = "TURVIB";
@@ -288,6 +338,25 @@
 
     fetchTopPlayers();
     setInterval(fetchTopPlayers, 15000);
+
+    function getTimeLeftKyiv() {
+      const now = new Date();
+      const kyivNow = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Kyiv" }));
+      const end = new Date(kyivNow);
+      end.setHours(21, 59, 59, 999);
+      return Math.floor((end - kyivNow) / 1000);
+    }
+
+    $(document).ready(function() {
+      const flipClock = $('#flip-clock').FlipClock(getTimeLeftKyiv(), {
+        clockFace: 'HourlyCounter',
+        countdown: true,
+        autoStart: true
+      });
+      setInterval(() => {
+        flipClock.setTime(getTimeLeftKyiv());
+      }, 60000);
+    });
   </script>
 </body>
 </html>

@@ -2,10 +2,9 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
-  <title>WOT Вишибайло</title>
+  <title>WOT Вишибайло – ТОП-1 бій кожного гравця</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
       background: transparent;
       color: #fff;
       margin: 0;
@@ -14,202 +13,207 @@
 
     .container {
       background: rgba(0, 0, 0, 0.5);
-      border-radius: 12px;
-      box-shadow: 0 0 15px #000;
-      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      padding: 24px;
       width: fit-content;
-      overflow: hidden;
+      max-width: 95vw;
     }
 
     .title {
-      font-size: 32px;
+      font-size: 36px;
       font-weight: bold;
       text-align: center;
-      margin-bottom: 10px;
-      color:#00fffb;
-      text-shadow: 2px 2px 5px #000;
+      margin-bottom: 20px;
+      color: orange;
+      text-shadow: 0 0 12px orange;
     }
 
     .top-player-wrapper {
-      position: relative;
-      height: 50px;
-      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 30px;
+      min-height: 60px;
     }
 
     .top-player {
-      font-size: 25px;
-      text-align: center;
-      padding: 10px 15px;
-      background: rgba(255, 200, 0, 0.2);
-      border: 2px solid gold;
-      
-      border-radius: 10px;
-      color: white;
+      background: linear-gradient(145deg, #3b3b3b, #1e1e1e);
+      border: 3px solid gold;
+      border-radius: 15px;
+      padding: 20px 30px;
+      font-size: 26px;
+      color: gold;
       position: absolute;
-      width: 90%;
-      opacity: 1;
-      transition: all 0.5s ease;
-      text-shadow: 2px 2px 5px #000;
-    }
-
-    .slide-out {
-      transform: translateY(100%);
+      text-align: center;
+      text-shadow: 1px 1px 5px #000;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeIn 0.8s ease;
       opacity: 0;
+      transform: translateY(-10px);
+      animation-fill-mode: forwards;
     }
 
-    .slide-in {
-      transform: translateY(-100%);
-      opacity: 0;
+    .top-player::before {
+      content: "\1F3C6";
+      font-size: 32px;
+      display: inline-block;
+      animation: pulse 1.5s infinite ease-in-out;
     }
 
-    .active {
-      transform: translateY(0);
-      opacity: 1;
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 6px 12px;
-      text-align: left;
-    }
-
-    th {
-      background: #222;
-    }
-
-    .gold   { color: gold; font-weight: bold; }
-    .silver { color: silver; font-weight: bold; }
-    .bronze { color: #cd7f32; font-weight: bold; }
-
-    tr.fade-in {
-      animation: fadeInUp 0.5s ease;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
+    @keyframes fadeIn {
       to {
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .card {
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: inset 0 0 5px #000, 0 0 10px rgba(255,255,255,0.05);
+      width: 200px;
+      transition: transform 0.2s ease;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card .place {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .card.silver {
+      border: 2px solid silver;
+      color: silver;
+    }
+    .card.bronze {
+      border: 2px solid #cd7f32;
+      color: #cd7f32;
+    }
+    .card.copper {
+      border: 2px solid #b87333;
+      color: #b87333;
+    }
+
+    .card .nick {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .card .tank {
+      font-size: 16px;
+      color: #aaa;
+      margin: 4px 0;
+    }
+
+    .card .points {
+      font-size: 18px;
+      font-weight: bold;
+      color: #00ffe7;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="title">ВИШИБАЙЛО</div>
-
     <div class="top-player-wrapper">
-      <div class="top-player active" id="topPlayer1"></div>
-      <div class="top-player" id="topPlayer2"></div>
+      <div class="top-player" id="topPlayer"></div>
     </div>
-
-    <table id="topTable">
-      <thead>
-        <tr>
-          <th>Місце</th>
-          <th>Нік</th>
-          <th>Танк</th>
-          <th>Очки</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="cards" id="cards"></div>
   </div>
 
   <script>
     const SHEET_ID = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
     const SHEET_NAME = "TURVIB";
-    const QUERY = `SELECT C, D, M`;
+    const QUERY = `SELECT C, D, M WHERE M IS NOT NULL`;
     const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${SHEET_NAME}&tq=${encodeURIComponent(QUERY)}`;
 
-    let currentTopNick = "";
-    let activeTop = 1;
-    let previousRows = [];
+    let lastTopKey = "";
 
     async function fetchTopPlayers() {
       try {
         const response = await fetch(url);
         const text = await response.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows;
+        const rows = json.table.rows || [];
 
         const playerMap = new Map();
         rows.forEach(row => {
           const nick = row.c[0]?.v;
           const tank = row.c[1]?.v;
-          const points = row.c[2]?.v;
-          if (!nick || !tank || points == null) return;
+          const points = Number(row.c[2]?.v);
+          if (!nick || !tank || isNaN(points)) return;
           if (!playerMap.has(nick) || playerMap.get(nick).points < points) {
             playerMap.set(nick, { nick, tank, points });
           }
         });
 
-        const uniquePlayers = Array.from(playerMap.values())
+        const battles = Array.from(playerMap.values())
           .sort((a, b) => b.points - a.points);
 
-        if (uniquePlayers.length === 0) return;
+        if (!battles.length) return;
 
-        const newTop = uniquePlayers[0];
-        const nextTop = activeTop === 1 ? 2 : 1;
-        const currentDiv = document.getElementById(`topPlayer${activeTop}`);
-        const nextDiv = document.getElementById(`topPlayer${nextTop}`);
+        // Top player block
+        const top = battles[0];
+        const topKey = `${top.nick}-${top.points}`;
+        const topEl = document.getElementById("topPlayer");
 
-        if (newTop.nick !== currentTopNick) {
-          currentTopNick = newTop.nick;
-
-          nextDiv.textContent = `${newTop.nick} — ${newTop.points} очок`;
-          nextDiv.className = "top-player slide-in";
-
-          setTimeout(() => {
-            currentDiv.className = "top-player slide-out";
-            nextDiv.className = "top-player active";
-            activeTop = nextTop;
-          }, 100);
+        if (topKey !== lastTopKey) {
+          topEl.style.animation = "none";
+          void topEl.offsetWidth; // reset animation
+          topEl.style.animation = "fadeIn 0.8s ease forwards";
+          topEl.textContent = `${top.nick} — ${top.points} балів`;
+          lastTopKey = topKey;
         }
 
-        const tbody = document.querySelector("#topTable tbody");
-        const newRows = [];
+        // Render cards
+        const cards = document.getElementById("cards");
+        cards.innerHTML = "";
 
-        for (let i = 1; i < Math.min(5, uniquePlayers.length); i++) {
-          const player = uniquePlayers[i];
-          const place = i + 1;
-          newRows.push({
-            place,
-            nick: player.nick,
-            tank: player.tank,
-            points: player.points
-          });
-        }
+        battles.slice(1).forEach((b, idx) => {
+          const card = document.createElement("div");
+          card.className = "card fade-in";
 
-        const rowsChanged = JSON.stringify(newRows) !== JSON.stringify(previousRows);
-        if (!rowsChanged) return;
+          if (idx === 0) card.classList.add("silver");
+          else if (idx === 1) card.classList.add("bronze");
+          else if (idx === 2) card.classList.add("copper");
 
-        previousRows = newRows;
+          card.innerHTML = `
+            <div class="place">${idx + 2} місце</div>
+            <div class="nick">${b.nick}</div>
+            <div class="tank">${b.tank}</div>
+            <div class="points">${b.points} балів</div>
+          `;
 
-        tbody.innerHTML = "";
-        newRows.forEach(({ place, nick, tank, points }) => {
-          const tr = document.createElement("tr");
-          tr.className = "fade-in";
-
-          let placeClass = "";
-          if (place === 2) placeClass = "gold";
-          else if (place === 3) placeClass = "silver";
-          else if (place === 4) placeClass = "bronze";
-
-          tr.innerHTML = `<td class="${placeClass}">${place}</td><td>${nick}</td><td>${tank}</td><td>${points}</td>`;
-          tbody.appendChild(tr);
+          cards.appendChild(card);
         });
 
-      } catch (error) {
-        console.error("Помилка під час завантаження:", error);
-        document.getElementById("topPlayer1").textContent = "Помилка";
+      } catch (e) {
+        console.error("Помилка завантаження:", e);
+        document.getElementById("topPlayer").textContent = "Помилка";
       }
     }
 

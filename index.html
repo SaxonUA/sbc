@@ -27,10 +27,8 @@
       font-weight: bold;
       text-align: center;
       margin-bottom: 20px;
-      background: linear-gradient(to right, orange, gold);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 10px rgba(255,140,0,0.8);
+      color: orange;
+      text-shadow: 2px 2px 6px #000;
     }
 
     .top-player-wrapper {
@@ -43,15 +41,14 @@
     }
 
     .top-player {
+      position: relative;
       background: rgba(30, 30, 30, 0.6);
-      border: 3px solid gold;
       border-radius: 15px;
       padding: 20px 30px;
       font-size: 26px;
       color: gold;
       text-align: center;
       text-shadow: 1px 1px 5px #000;
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -62,16 +59,45 @@
       transition: all 0.5s ease;
     }
 
-    .top-player.explode {
-      box-shadow: 0 0 15px 5px gold, 0 0 25px 10px orange;
-      transform: scale(1.03);
-    }
-
     .top-player::before {
       content: "\1F3C6";
       font-size: 32px;
       display: inline-block;
       animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    .top-player::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 15px;
+      z-index: -1;
+      background: linear-gradient(270deg, white, yellow, orange, black, white);
+      background-size: 800% 800%;
+      animation: borderMove 4s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: destination-out;
+      padding: 3px;
+      box-sizing: border-box;
+      background-size: 600% 600%;
+      animation: borderMove 4s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: destination-out;
+      padding: 3px;
+      box-sizing: border-box;
+    }
+
+    @keyframes borderMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .new-leader {
@@ -214,9 +240,7 @@
         const topEl = document.getElementById("topPlayer");
 
         if (topKey !== lastTopKey) {
-          topEl.classList.remove("explode");
           void topEl.offsetWidth;
-          topEl.classList.add("explode");
           topEl.style.animation = "fadeIn 0.8s ease forwards";
           topEl.textContent = `${top.nick} — ${top.points} балів`;
 

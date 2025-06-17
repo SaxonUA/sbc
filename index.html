@@ -96,7 +96,6 @@
     let spinning  = false;
     let currentAngle = 0;
     let spinCount = 0;
-    let winners = [];
 
     function drawWheel(canvasId, items, angleOffset = 0, highlightIndex = -1) {
       const canvas   = document.getElementById(canvasId);
@@ -129,23 +128,26 @@
     }
 
     function spin() {
-      if (spinning || nicknames.length === 0) return;
+      if (spinning || nicknames.length === 0 || spinCount >= 2) return;
       spinning = true;
       document.getElementById("spinBtn").disabled = true;
 
-      let angle     = currentAngle;
-      let velocity  = 1.5 + Math.random() * 0.5; // Вища початкова швидкість
-      const totalDuration = 22000; // 22 секунди
+      const totalDuration = spinCount === 0 ? 22000 : 25000;
+      const startAngle = currentAngle;
+      const angleDelta = (Math.random() * 0.2 + 0.8) * (Math.PI * 30); // more natural random distance
+      const targetAngle = startAngle + angleDelta;
       const startTime = performance.now();
-      let lastIndex  = -1;
+      let lastIndex = -1;
 
       function animate(time) {
         const elapsed = time - startTime;
         const progress = Math.min(elapsed / totalDuration, 1);
         const easeOut = 1 - Math.pow(1 - progress, 3);
-        angle = currentAngle + easeOut * 20 * Math.PI;
+        const angle = startAngle + easeOut * (targetAngle - startAngle);
 
-        const index = Math.floor(((3 * Math.PI / 2 - (angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (2 * Math.PI) * nicknames.length) % nicknames.length;
+        const pointerAngle = (3 * Math.PI) / 2;
+        const relative = (pointerAngle - (angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        const index = Math.floor(relative / (2 * Math.PI) * nicknames.length) % nicknames.length;
 
         if (index !== lastIndex) lastIndex = index;
         drawWheel("nicknameWheel", nicknames, angle, index);
@@ -156,19 +158,14 @@
           currentAngle = angle % (2 * Math.PI);
           const selected = nicknames[index];
           document.getElementById("nicknameResult").textContent = selected;
-          if (!winners.includes(selected)) {
-            winners.push(selected);
-          }
           if (spinCount === 0) {
             document.getElementById("winner1").textContent = selected;
-          } else if (spinCount === 1) {
+          } else {
             document.getElementById("winner2").textContent = selected;
           }
           spinCount++;
           spinning = false;
-          if (spinCount < 2) {
-            document.getElementById("spinBtn").disabled = false;
-          }
+          if (spinCount < 2) document.getElementById("spinBtn").disabled = false;
         }
       }
 

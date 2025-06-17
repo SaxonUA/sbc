@@ -19,20 +19,21 @@
     .wheel-wrapper {
       position: relative;
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 80px;
     }
     .arrow {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%) rotate(180deg);
       width: 0;
       height: 0;
       border-left: 30px solid transparent;
       border-right: 30px solid transparent;
-      border-bottom: 50px solid red;
-      position: absolute;
-      top: -55px;
-      left: 50%;
-      transform: translateX(-50%) rotate(180deg);
+      border-bottom: 40px solid red;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
       z-index: 10;
-      box-shadow: 0 0 15px rgba(255,0,0,0.6);
+      filter: drop-shadow(0 0 12px red);
     }
     button {
       margin-top: 20px;
@@ -186,7 +187,7 @@
         if (nicknames.length === 0) throw new Error("No nicknames found in column C.");
 
         drawWheel("nicknameWheel", nicknames);
-        document.getElementById("loading").textContent = `Знайдено ${nicknames.length} унікальних ніків.`;
+        document.getElementById("loading").textContent = `В розіграші беруть участь ${nicknames.length} нікнеймів.`;
         document.getElementById("spinBtn").disabled = false;
       } catch (err) {
         console.error(err);

@@ -1,217 +1,200 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <title>WOT Вишибайло – ТОП-1 бій кожного гравця</title>
-
-  <!-- Orbitron font -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <title>WoT Tracker Колесо</title>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
+    body {
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
       background: transparent;
-      color: #fff;
-      font-family: 'Orbitron', sans-serif;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #444;
     }
-
-    .container {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(0, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 24px;
-      width: fit-content;
-      max-width: 95vw;
-      margin: 0 auto;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.05);
+    .wheel-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-top: 10px;
     }
-
-    .title {
-      font-size: 42px;
-      text-align: center;
-      margin-bottom: 20px;
-      color: cyan;
-      letter-spacing: 4px;
-      text-shadow: 0 0 6px cyan, 0 0 12px rgba(0, 255, 255, 0.5);
-    }
-
-    .top-player-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 20px;
-      min-height: 70px;
-    }
-
-    .top-player {
-      background: rgba(0, 255, 255, 0.05);
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 24px 64px;
-      font-size: 28px;
-      color: #00ffe7;
-      text-shadow: 0 0 4px #00ffe7;
-      animation: glowIn 0.6s ease;
-    }
-
-    @keyframes glowIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    .new-leader {
+    .arrow {
+      width: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-bottom: 50px solid red;
       position: absolute;
-      top: -30px;
-      background: cyan;
-      color: #000;
-      font-weight: bold;
+      top: -55px;
+      left: 50%;
+      transform: translateX(-50%) rotate(180deg);
+      z-index: 10;
+      box-shadow: 0 0 15px rgba(255,0,0,0.6);
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 25px;
       font-size: 16px;
-      padding: 6px 16px;
-      border-radius: 12px;
-      box-shadow: 0 0 8px cyan;
-      animation: fadeUp 2s ease;
+      background: linear-gradient(145deg, #ff6600, #1a1a1a);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: all 0.2s ease-in-out;
     }
-
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateY(10px); }
-      10%, 90% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-10px); }
+    button:hover {
+      background: linear-gradient(145deg, #ff8800, #2a2a2a);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.35);
     }
-
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
+    .result {
+      margin-top: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff9900;
     }
-
-    .card {
-      background: linear-gradient(145deg, #0f1a2b, #1a2940);
-      border: 1px solid rgba(0, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 20px;
-      width: 220px;
-      text-align: center;
-      color: #fff;
-      box-shadow: 0 0 12px rgba(0, 255, 255, 0.08);
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-    }
-
-    .place {
+    #loading {
+      margin-top: 20px;
       font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 8px;
-      color: #00ffee;
+      color: #bbbbbb;
     }
-
-    .nick {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 6px;
+    #winners {
+      margin-top: 30px;
+      font-size: 20px;
+      color: #66ff99;
     }
-
-    .tank {
-      font-size: 15px;
-      color: #a0cfd0;
-      margin-bottom: 10px;
-    }
-
-    .points {
-      font-size: 24px;
-      font-weight: bold;
-      color: #00ffae;
-      text-shadow: 0 0 5px #00ffae;
-    }
-
-    .card:nth-child(1) { border-left: 4px solid #c0c0c0; }
-    .card:nth-child(2) { border-left: 4px solid #cd7f32; }
-    .card:nth-child(3) { border-left: 4px solid #b87333; }
-    .card:nth-child(4) { border-left: 4px solid #8B4513; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="title" id="mainTitle">ВИШИБАЙЛО</div>
-    <div class="top-player-wrapper">
-      <div class="top-player" id="topPlayer"></div>
-    </div>
-    <div class="cards" id="cards"></div>
+  <div class="wheel-wrapper">
+    <div class="arrow"></div>
+    <canvas id="nicknameWheel" width="350" height="350"></canvas>
+  </div>
+
+  <div class="result" id="nicknameResult">...</div>
+  <button id="spinBtn" onclick="spin()" disabled>Крутити колесо</button>
+  <div id="loading">Завантаження ніків з Google Sheets...</div>
+
+  <div id="winners">
+    <p>🎁 Переможець 1: <span id="winner1">—</span></p>
+    <p>🎁 Переможець 2: <span id="winner2">—</span></p>
   </div>
 
   <script>
-    const SHEET_ID = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
+    const SHEET_ID   = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
+    const API_KEY    = "AIzaSyDmE9Bt5HlFccXs_-Z109RVxIyv_itgonM";
     const SHEET_NAME = "TURVIB";
-    const QUERY = `SELECT C, D, M WHERE M IS NOT NULL`;
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${SHEET_NAME}&tq=${encodeURIComponent(QUERY)}`;
+    const COLUMN_C   = "C";
 
-    let lastTopKey = "";
+    let nicknames = [];
+    let spinning  = false;
+    let currentAngle = 0;
+    let spinCount = 0;
+    let winners = [];
 
-    async function fetchTopPlayers() {
-      try {
-        const res = await fetch(url);
-        const txt = await res.text();
-        const json = JSON.parse(txt.substr(47).slice(0, -2));
-        const rows = json.table.rows || [];
+    function drawWheel(canvasId, items, angleOffset = 0, highlightIndex = -1) {
+      const canvas   = document.getElementById(canvasId);
+      const ctx      = canvas.getContext("2d");
+      const radius   = canvas.width / 2;
+      const centerX  = radius;
+      const centerY  = radius;
+      const total    = items.length;
+      const angleStep = (2 * Math.PI) / total;
 
-        const map = new Map();
-        rows.forEach(r => {
-          const nick = r.c[0]?.v,
-                tank = r.c[1]?.v,
-                pts = Number(r.c[2]?.v);
-          if (!nick || !tank || isNaN(pts)) return;
-          if (!map.has(nick) || map.get(nick).points < pts)
-            map.set(nick, { nick, tank, points: pts });
-        });
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const list = Array.from(map.values()).sort((a, b) => b.points - a.points);
-        if (!list.length) return;
-
-        const top = list[0],
-              topKey = `${top.nick}-${top.points}`,
-              topEl = document.getElementById("topPlayer");
-
-        if (topKey !== lastTopKey) {
-          void topEl.offsetWidth;
-          topEl.style.animation = "glowIn .6s ease forwards";
-          topEl.textContent = `${top.nick} — ${top.points} балів`;
-
-          const wrapper = document.querySelector(".top-player-wrapper"),
-                note = document.createElement("div");
-          note.className = "new-leader";
-          note.textContent = "НОВИЙ ЛІДЕР!";
-          wrapper.appendChild(note);
-          setTimeout(() => note.remove(), 2000);
-          lastTopKey = topKey;
-        }
-
-        const cards = document.getElementById("cards");
-        cards.innerHTML = "";
-        list.slice(1, 5).forEach((b, i) => {
-          const c = document.createElement("div");
-          c.className = "card";
-          c.innerHTML = `
-            <div class="place">${i + 2} місце</div>
-            <div class="nick">${b.nick}</div>
-            <div class="tank">${b.tank}</div>
-            <div class="points">${b.points} балів</div>`;
-          cards.appendChild(c);
-        });
-
-      } catch (e) {
-        console.error("Помилка:", e);
-        document.getElementById("topPlayer").textContent = "Помилка";
+      for (let i = 0; i < total; i++) {
+        const angle = i * angleStep + angleOffset;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, angle, angle + angleStep);
+        ctx.fillStyle = (i === highlightIndex) ? "#ffa600" : (i % 2 === 0 ? "#ff6600" : "#1a1a1a");
+        ctx.fill();
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle + angleStep / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "white";
+        ctx.font = "11px sans-serif";
+        const label = items[i];
+        ctx.fillText(label.length > 30 ? label.slice(0, 27) + "…" : label, radius - 10, 4);
+        ctx.restore();
       }
     }
 
-    fetchTopPlayers();
-    setInterval(fetchTopPlayers, 15000);
+    function spin() {
+      if (spinning || nicknames.length === 0) return;
+      spinning = true;
+      document.getElementById("spinBtn").disabled = true;
+
+      let angle     = currentAngle;
+      let velocity  = 1.5 + Math.random() * 0.5; // Вища початкова швидкість
+      const totalDuration = 22000; // 22 секунди
+      const startTime = performance.now();
+      let lastIndex  = -1;
+
+      function animate(time) {
+        const elapsed = time - startTime;
+        const progress = Math.min(elapsed / totalDuration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        angle = currentAngle + easeOut * 20 * Math.PI;
+
+        const index = Math.floor(((3 * Math.PI / 2 - (angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (2 * Math.PI) * nicknames.length) % nicknames.length;
+
+        if (index !== lastIndex) lastIndex = index;
+        drawWheel("nicknameWheel", nicknames, angle, index);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          currentAngle = angle % (2 * Math.PI);
+          const selected = nicknames[index];
+          document.getElementById("nicknameResult").textContent = selected;
+          if (!winners.includes(selected)) {
+            winners.push(selected);
+          }
+          if (spinCount === 0) {
+            document.getElementById("winner1").textContent = selected;
+          } else if (spinCount === 1) {
+            document.getElementById("winner2").textContent = selected;
+          }
+          spinCount++;
+          spinning = false;
+          if (spinCount < 2) {
+            document.getElementById("spinBtn").disabled = false;
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    async function loadNicknames() {
+      const urlC = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME + "!" + COLUMN_C + ":" + COLUMN_C)}?key=${API_KEY}`;
+      try {
+        const resC = await fetch(urlC);
+        if (!resC.ok) throw new Error("Network response was not ok");
+        const dataC = await resC.json();
+
+        const rawNames = (dataC.values || []).flat().map(n => n.trim()).filter(Boolean);
+        nicknames = [...new Set(rawNames)];
+
+        if (nicknames.length === 0) throw new Error("No nicknames found in column C.");
+
+        drawWheel("nicknameWheel", nicknames);
+        document.getElementById("loading").textContent = `Знайдено ${nicknames.length} унікальних ніків.`;
+        document.getElementById("spinBtn").disabled = false;
+      } catch (err) {
+        console.error(err);
+        document.getElementById("loading").textContent = "Не вдалося завантажити дані. Перевірте API key / Sheet ID.";
+      }
+    }
+
+    window.addEventListener("load", loadNicknames);
   </script>
 </body>
 </html>

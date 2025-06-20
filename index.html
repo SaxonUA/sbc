@@ -1,199 +1,212 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <title>WoT Tracker Колесо</title>
-  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Рембо Челендж</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
-      background: #111;
+      background: url('РЕМБО САКСОН (1).png') no-repeat center/cover;
+      font-family: 'Arial Black', sans-serif;
       color: #fff;
-      font-family: sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
-    canvas {
+
+    .overlay {
+      padding: 25px 50px;
+      margin: auto;
       background: transparent;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #444;
+      border-radius: 30px;
+      width: fit-content;
     }
-    .wheel-wrapper {
-      position: relative;
+
+    .damage-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+
+    .label {
+      font-size: 40px;
+      color: orange;
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, .7), 0 0 10px rgba(255, 140, 0, .8);
+      margin: 0;
+    }
+
+    .flip-damage .flip-clock-wrapper {
+      background: rgba(0, 0, 0, .5);
+      border: 2px solid orange;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 140, 0, .6);
       display: inline-block;
-      margin-top: 80px;
     }
-    .arrow {
-      position: absolute;
-      top: -15px;
-      left: 50%;
-      transform: translateX(-50%) rotate(180deg);
-      width: 0;
-      height: 0;
-      border-left: 30px solid transparent;
-      border-right: 30px solid transparent;
-      border-bottom: 40px solid red;
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      z-index: 10;
-      filter: drop-shadow(0 0 6px #ff0000) drop-shadow(0 0 12px #ff0000);
-      box-shadow: 0 0 18px 4px rgba(255,0,0,0.6);
+
+    .flip-damage.increase .flip-clock-wrapper {
+      animation: glow-green 1.5s ease;
     }
-    button {
-      margin-top: 20px;
-      padding: 10px 25px;
-      font-size: 16px;
-      background: linear-gradient(145deg, #ff6600, #1a1a1a);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      transition: all 0.2s ease-in-out;
+
+    .flip-damage.decrease .flip-clock-wrapper {
+      animation: glow-red 1.5s ease;
     }
-    button:hover {
-      background: linear-gradient(145deg, #ff8800, #2a2a2a);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+
+    @keyframes glow-green {
+      0% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.9); border-color: lime; }
+      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
     }
-    .result {
-      margin-top: 10px;
-      font-size: 22px;
+
+    @keyframes glow-red {
+      0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.9); border-color: red; }
+      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
+    }
+
+    .note {
+      font-size: 25px;
       font-weight: bold;
-      color: #ff9900;
+      margin: 5px 0;
     }
-    #loading {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #bbbbbb;
+
+    .note-gradient {
+      background: linear-gradient(270deg, orange, white);
+      background-size: 400% 50%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: grad 6s ease infinite;
     }
-    #winners {
-      margin-top: 30px;
-      font-size: 20px;
-      color: #66ff99;
+
+    @keyframes grad {
+      0% { background-position: 0 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0 50% }
+    }
+
+    .flip-clock-wrapper ul li a div div.inn {
+      font-size: 70px;
+    }
+
+    .countdown-wrapper {
+      margin-top: 60px;
+    }
+
+    .rembo-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 45px;
+      color: orange;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, .7), 0 0 10px rgba(255, 140, 0, .8);
+    }
+
+    #damage-clock {
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
-  <div class="wheel-wrapper">
-    <div class="arrow"></div>
-    <canvas id="nicknameWheel" width="350" height="350"></canvas>
+  <div class="overlay">
+    <div class="damage-block">
+      <div class="label">ЗАЛИШИЛОСЬ</div>
+      <div class="label">НАСТРІЛЯТИ:</div>
+      <div class="flip-damage"><div id="damage-clock"></div></div>
+    </div>
+
+    <div class="note note-gradient">+100 урону за 1 лайк YouTube</div>
+    <div class="note note-gradient">+1 урон за 2 "тапи" в TikTok</div>
+    <div class="note note-gradient">+15 урону за 1 грн</div>
+
+    <div class="countdown-wrapper">
+      <div class="flip-clock-wrapper">
+        <div class="rembo-title">До кінця челенджу</div>
+        <div class="rembo-title">залишилось:</div>
+        <div id="flip-clock"></div>
+      </div>
+    </div>
   </div>
 
-  <div class="result" id="nicknameResult">...</div>
-  <button id="spinBtn" onclick="spin()" disabled>Крутити колесо</button>
-  <div id="loading">Завантаження ніків з Google Sheets...</div>
-
-  <div id="winners">
-    <p>🎁 Переможець 1: <span id="winner1">—</span></p>
-    <p>🎁 Переможець 2: <span id="winner2">—</span></p>
-  </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
   <script>
-    const SHEET_ID   = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
-    const API_KEY    = "AIzaSyDmE9Bt5HlFccXs_-Z109RVxIyv_itgonM";
-    const SHEET_NAME = "TURVIB";
-    const COLUMN_C   = "C";
+    const SHEET_ID = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
+    const GID = "1630188258";
 
-    let nicknames = [];
-    let spinning  = false;
-    let currentAngle = 0;
-    let spinCount = 0;
-
-    function drawWheel(canvasId, items, angleOffset = 0, highlightIndex = -1) {
-      const canvas   = document.getElementById(canvasId);
-      const ctx      = canvas.getContext("2d");
-      const radius   = canvas.width / 2;
-      const centerX  = radius;
-      const centerY  = radius;
-      const total    = items.length;
-      const angleStep = (2 * Math.PI) / total;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < total; i++) {
-        const angle = i * angleStep + angleOffset;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius, angle, angle + angleStep);
-        ctx.fillStyle = (i === highlightIndex) ? "#ffa600" : (i % 2 === 0 ? "#ff6600" : "#1a1a1a");
-        ctx.fill();
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(angle + angleStep / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "white";
-        ctx.font = "11px sans-serif";
-        const label = items[i];
-        ctx.fillText(label.length > 30 ? label.slice(0, 27) + "…" : label, radius - 10, 4);
-        ctx.restore();
-      }
+    async function fetchSingleCell(range) {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&range=${range}&tqx=out:json`;
+      const res = await fetch(url);
+      const txt = await res.text();
+      const json = JSON.parse(txt.substring(47).slice(0, -2));
+      return json.table.rows[0].c[0]?.v || 0;
     }
 
-    function spin() {
-      if (spinning || nicknames.length === 0 || spinCount >= 2) return;
-      spinning = true;
-      document.getElementById("spinBtn").disabled = true;
+    $(async function () {
+      const flipClock = $('#flip-clock').FlipClock(getTimeLeftKyiv(), {
+        clockFace: 'HourlyCounter', countdown: true, autoStart: true
+      });
+      $('.flip-clock-divider.hours .flip-clock-label').text('Години');
+      $('.flip-clock-divider.minutes .flip-clock-label').text('Хвилини');
+      $('.flip-clock-divider.seconds .flip-clock-label').text('Секунди');
 
-      const totalDuration = spinCount === 0 ? 21000 : 27000;
-      const startAngle = currentAngle;
-      const angleDelta = (Math.random() * 0.2 + 0.8) * (Math.PI * 30); // more natural random distance
-      const targetAngle = startAngle + angleDelta;
-      const startTime = performance.now();
-      let lastIndex = -1;
+      setInterval(() => {
+        flipClock.setTime(getTimeLeftKyiv());
+      }, 60000);
 
-      function animate(time) {
-        const elapsed = time - startTime;
-        const progress = Math.min(elapsed / totalDuration, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        const angle = startAngle + easeOut * (targetAngle - startAngle);
+      const damageClock = $('#damage-clock').FlipClock(0, { clockFace: 'Counter', autoStart: false });
+      let currentDamage = 0;
+      let animationInterval = null;
+      let animationInProgress = false;
 
-        const pointerAngle = (3 * Math.PI) / 2;
-        const relative = (pointerAngle - (angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-        const index = Math.floor(relative / (2 * Math.PI) * nicknames.length) % nicknames.length;
+      async function animateDamage(newValue) {
+        if (animationInProgress) clearInterval(animationInterval);
+        if (currentDamage === newValue) return;
 
-        if (index !== lastIndex) lastIndex = index;
-        drawWheel("nicknameWheel", nicknames, angle, index);
+        const step = newValue > currentDamage ? 1 : -1;
+        const container = document.querySelector('.flip-damage');
 
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          currentAngle = angle % (2 * Math.PI);
-          const selected = nicknames[index];
-          document.getElementById("nicknameResult").textContent = selected;
-          if (spinCount === 0) {
-            document.getElementById("winner1").textContent = selected;
-          } else {
-            document.getElementById("winner2").textContent = selected;
+        container.classList.toggle('increase', step > 0);
+        container.classList.toggle('decrease', step < 0);
+
+        animationInProgress = true;
+        animationInterval = setInterval(() => {
+          currentDamage += step;
+          damageClock.setTime(currentDamage);
+          if (currentDamage === newValue) {
+            clearInterval(animationInterval);
+            animationInProgress = false;
+            setTimeout(() => container.classList.remove('increase', 'decrease'), 1500);
           }
-          spinCount++;
-          spinning = false;
-          if (spinCount < 2) document.getElementById("spinBtn").disabled = false;
+        }, 5);
+      }
+
+      async function updateDamage() {
+        try {
+          let raw = await fetchSingleCell("C14");
+          raw = raw.toString().replace(/\s/g, '');
+          const value = parseInt(raw || 0);
+          animateDamage(value);
+        } catch (e) {
+          console.error("Помилка оновлення дамага:", e);
         }
       }
 
-      requestAnimationFrame(animate);
+      await updateDamage();
+      setInterval(updateDamage, 15000);
+    });
+
+    function getTimeLeftKyiv() {
+      const now = new Date();
+      const kyiv = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Kyiv" }));
+      const end = new Date(kyiv);
+      end.setHours(23, 59, 59, 999);
+      return Math.floor((end - kyiv) / 1000);
     }
-
-    async function loadNicknames() {
-      const urlC = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME + "!" + COLUMN_C + ":" + COLUMN_C)}?key=${API_KEY}`;
-      try {
-        const resC = await fetch(urlC);
-        if (!resC.ok) throw new Error("Network response was not ok");
-        const dataC = await resC.json();
-
-        const rawNames = (dataC.values || []).flat().map(n => n.trim()).filter(Boolean);
-        nicknames = [...new Set(rawNames)];
-
-        if (nicknames.length === 0) throw new Error("No nicknames found in column C.");
-
-        drawWheel("nicknameWheel", nicknames);
-        document.getElementById("loading").textContent = `В розіграші беруть участь ${nicknames.length} нікнеймів.`;
-        document.getElementById("spinBtn").disabled = false;
-      } catch (err) {
-        console.error(err);
-        document.getElementById("loading").textContent = "Не вдалося завантажити дані. Перевірте API key / Sheet ID.";
-      }
-    }
-
-    window.addEventListener("load", loadNicknames);
   </script>
 </body>
 </html>

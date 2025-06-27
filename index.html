@@ -1,212 +1,188 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <title>Рембо Челендж</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>WOT Tracker</title>
   <style>
-    body {
-      background: url('РЕМБО САКСОН (1).png') no-repeat center/cover;
-      font-family: 'Arial Black', sans-serif;
-      color: #fff;
-      text-align: center;
+    html, body {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .overlay {
-      padding: 25px 50px;
-      margin: auto;
       background: transparent;
-      border-radius: 30px;
-      width: fit-content;
+      font-family: Arial, sans-serif;
     }
 
-    .damage-block {
+    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 40px;
+      gap: 3px;
+      padding: 20px;
     }
 
-    .label {
-      font-size: 40px;
-      color: orange;
-      font-family: 'Orbitron', sans-serif;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, .7), 0 0 10px rgba(255, 140, 0, .8);
-      margin: 0;
-    }
-
-    .flip-damage .flip-clock-wrapper {
-      background: rgba(0, 0, 0, .5);
-      border: 2px solid orange;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255, 140, 0, .6);
-      display: inline-block;
-    }
-
-    .flip-damage.increase .flip-clock-wrapper {
-      animation: glow-green 1.5s ease;
-    }
-
-    .flip-damage.decrease .flip-clock-wrapper {
-      animation: glow-red 1.5s ease;
-    }
-
-    @keyframes glow-green {
-      0% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.9); border-color: lime; }
-      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
-    }
-
-    @keyframes glow-red {
-      0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.9); border-color: red; }
-      100% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); border-color: orange; }
-    }
-
-    .note {
-      font-size: 25px;
+    .header {
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 28px;
       font-weight: bold;
-      margin: 5px 0;
+      padding: 12px 40px;
+      border: 2px solid orange;
+      border-radius: 16px;
+      text-align: center;
+      text-shadow: 2px 2px 4px black;
+      box-shadow: 0 0 8px rgba(0,0,0,0.6);
     }
 
-    .note-gradient {
-      background: linear-gradient(270deg, orange, white);
-      background-size: 400% 50%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: grad 6s ease infinite;
-    }
-
-    @keyframes grad {
-      0% { background-position: 0 50% }
-      50% { background-position: 100% 50% }
-      100% { background-position: 0 50% }
-    }
-
-    .flip-clock-wrapper ul li a div div.inn {
-      font-size: 70px;
-    }
-
-    .countdown-wrapper {
-      margin-top: 60px;
-    }
-
-    .rembo-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 45px;
-      color: orange;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, .7), 0 0 10px rgba(255, 140, 0, .8);
-    }
-
-    #damage-clock {
+    .row {
       display: flex;
+      gap: 4px;
       justify-content: center;
+    }
+
+    .cell {
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid orange;
+      border-radius: 16px;
+      width: 190px;
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px black;
+      box-shadow: 0 0 8px rgba(0,0,0,0.6);
+      transition: box-shadow 0.4s ease, transform 0.4s ease, border 0.4s ease;
+    }
+
+    .highlight-shadow {
+      box-shadow:
+        0 0 16px 6px black,
+        0 0 10px 2px white inset;
+      transform: scale(1.08);
+      border: 2px solid white;
+    }
+
+    .nickname {
+      font-size: 25px;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-size: 48px;
+    }
+
+    .orange .value {
+      color: orange;
+    }
+
+    .cyan .value {
+      color: cyan;
+    }
+
+    .footer {
+      width: 380px;
+      text-align: right;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      margin-top: 4px;
+      text-shadow: 2px 2px 4px black;
     }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <div class="damage-block">
-      <div class="label">ЗАЛИШИЛОСЬ</div>
-      <div class="label">НАСТРІЛЯТИ:</div>
-      <div class="flip-damage"><div id="damage-clock"></div></div>
-    </div>
 
-    <div class="note note-gradient">+100 урону за 1 лайк YouTube</div>
-    <div class="note note-gradient">+1 урон за 2 "тапи" в TikTok</div>
-    <div class="note note-gradient">+15 урону за 1 грн</div>
-
-    <div class="countdown-wrapper">
-      <div class="flip-clock-wrapper">
-        <div class="rembo-title">До кінця челенджу</div>
-        <div class="rembo-title">залишилось:</div>
-        <div id="flip-clock"></div>
+  <div class="container">
+    <div class="header">НАЙКРАЩИЙ ПОСТРІЛ</div>
+    <div class="row">
+      <div class="cell orange" id="saxon-shot-cell">
+        <div class="nickname">Saxon</div>
+        <div class="value" id="saxon-shot">-</div>
+      </div>
+      <div class="cell orange" id="bipka-shot-cell">
+        <div class="nickname">Bipka</div>
+        <div class="value" id="bipka-shot">-</div>
       </div>
     </div>
+    <div class="header">НАЙБІЛЬШЕ ДАМАГУ</div>
+    <div class="row">
+      <div class="cell cyan" id="saxon-damage-cell">
+        <div class="nickname">Saxon</div>
+        <div class="value" id="saxon-damage">-</div>
+      </div>
+      <div class="cell cyan" id="bipka-damage-cell">
+        <div class="nickname">Bipka</div>
+        <div class="value" id="bipka-damage">-</div>
+      </div>
+    </div>
+    <div class="footer" id="battles">Win: </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
   <script>
-    const SHEET_ID = "17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk";
-    const GID = "1630188258";
+    const sheetId = '17phnEn-NW-OnrZg4DcW65r-Xoq6ScsdVjS5yL0SS3fk';
+    const sheetName = 'BS';
 
-    async function fetchSingleCell(range) {
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&range=${range}&tqx=out:json`;
-      const res = await fetch(url);
-      const txt = await res.text();
-      const json = JSON.parse(txt.substring(47).slice(0, -2));
-      return json.table.rows[0].c[0]?.v || 0;
+    async function fetchCell(range) {
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&range=${sheetName}!${range}`;
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.substring(47).slice(0, -2));
+        return json.table.rows[0].c[0]?.v ?? '-';
+      } catch (e) {
+        console.error(`Помилка читання ${range}:`, e);
+        return '-';
+      }
     }
 
-    $(async function () {
-      const flipClock = $('#flip-clock').FlipClock(getTimeLeftKyiv(), {
-        clockFace: 'HourlyCounter', countdown: true, autoStart: true
-      });
-      $('.flip-clock-divider.hours .flip-clock-label').text('Години');
-      $('.flip-clock-divider.minutes .flip-clock-label').text('Хвилини');
-      $('.flip-clock-divider.seconds .flip-clock-label').text('Секунди');
-
-      setInterval(() => {
-        flipClock.setTime(getTimeLeftKyiv());
-      }, 60000);
-
-      const damageClock = $('#damage-clock').FlipClock(0, { clockFace: 'Counter', autoStart: false });
-      let currentDamage = 0;
-      let animationInterval = null;
-      let animationInProgress = false;
-
-      async function animateDamage(newValue) {
-        if (animationInProgress) clearInterval(animationInterval);
-        if (currentDamage === newValue) return;
-
-        const step = newValue > currentDamage ? 1 : -1;
-        const container = document.querySelector('.flip-damage');
-
-        container.classList.toggle('increase', step > 0);
-        container.classList.toggle('decrease', step < 0);
-
-        animationInProgress = true;
-        animationInterval = setInterval(() => {
-          currentDamage += step;
-          damageClock.setTime(currentDamage);
-          if (currentDamage === newValue) {
-            clearInterval(animationInterval);
-            animationInProgress = false;
-            setTimeout(() => container.classList.remove('increase', 'decrease'), 1500);
-          }
-        }, 5);
-      }
-
-      async function updateDamage() {
-        try {
-          let raw = await fetchSingleCell("C14");
-          raw = raw.toString().replace(/\s/g, '');
-          const value = parseInt(raw || 0);
-          animateDamage(value);
-        } catch (e) {
-          console.error("Помилка оновлення дамага:", e);
-        }
-      }
-
-      await updateDamage();
-      setInterval(updateDamage, 15000);
-    });
-
-    function getTimeLeftKyiv() {
-      const now = new Date();
-      const kyiv = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Kyiv" }));
-      const end = new Date(kyiv);
-      end.setHours(23, 59, 59, 999);
-      return Math.floor((end - kyiv) / 1000);
+    function formatNumber(value) {
+      const num = parseInt(value);
+      return isNaN(num) ? value : num.toLocaleString('uk-UA');
     }
+
+    function updateCellHighlight(id1, id2, val1, val2) {
+      const cell1 = document.getElementById(id1);
+      const cell2 = document.getElementById(id2);
+
+      cell1.classList.remove('highlight-shadow');
+      cell2.classList.remove('highlight-shadow');
+
+      const n1 = parseInt(val1.toString().replace(/\s/g, '')) || 0;
+      const n2 = parseInt(val2.toString().replace(/\s/g, '')) || 0;
+
+      if (n1 > n2) {
+        cell1.classList.add('highlight-shadow');
+      } else if (n2 > n1) {
+        cell2.classList.add('highlight-shadow');
+      }
+    }
+
+    function animateChange(el, newValue) {
+      if (el.textContent === newValue) return;
+      el.textContent = newValue;
+    }
+
+    async function updateValues() {
+      const saxonShot = formatNumber(await fetchCell('E2'));
+      const bipkaShot = formatNumber(await fetchCell('F2'));
+      const saxonDamage = formatNumber(await fetchCell('A2'));
+      const bipkaDamage = formatNumber(await fetchCell('B2'));
+      const saxonBattles = formatNumber(await fetchCell('G2'));
+
+      animateChange(document.getElementById('saxon-shot'), saxonShot);
+      animateChange(document.getElementById('bipka-shot'), bipkaShot);
+      animateChange(document.getElementById('saxon-damage'), saxonDamage);
+      animateChange(document.getElementById('bipka-damage'), bipkaDamage);
+      animateChange(document.getElementById('battles'), `Win: ${saxonBattles} %`);
+
+      updateCellHighlight('saxon-shot-cell', 'bipka-shot-cell', saxonShot, bipkaShot);
+      updateCellHighlight('saxon-damage-cell', 'bipka-damage-cell', saxonDamage, bipkaDamage);
+    }
+
+    updateValues();
+    setInterval(updateValues, 15000);
   </script>
+
 </body>
 </html>
